@@ -1,11 +1,10 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-int main()
-{
-	vector<int> vals={2,6,3,11,7,4,9,7,10,6};
-	int target = 20;
-
+vector<int> solution(vector<int> vals, int target){
+	
+	vector<int> res(3);
+	
 	sort(vals.begin(),vals.end());
 	for(int i=0;i<vals.size();i++)
 	{
@@ -16,8 +15,10 @@ int main()
 		{
 			if(x+vals[l]+vals[r]==target)
 			{
-				cout<<"Triplet Found: "<<x<<" "<<vals[l]<<" "<<vals[r]<<endl;
-				return 0;
+				res[0] = x;
+				res[1] = vals[l]
+				res[2] = vals[r]
+				return res;
 			}
 			if(x+vals[l]+vals[r]>target)
 			{
@@ -30,6 +31,21 @@ int main()
 		}
 	}
 
-	cout<<"No triplet"<<endl;
+	
+	return res;
+}
+
+int main()
+{
+	vector<int> vals={2,6,3,11,7,4,9,7,10,6};
+	int target = 20;
+
+	vector<int> res = solution(vals, target);
+
+	
+	if(res.size() == 0)
+		cout<<"No triplet"<<endl;
+	else
+		cout << res[0] << " " << res[1] << " " << res[2] << endl; 
 	return 0;
 }
