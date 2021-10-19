@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap");
+
+.col-md-3 {
+  margin: 5px auto;
+}
+
+.input {
+  margin: 2% 25%;
+  padding: 2% 2.5%;
+  font-size: 16px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+input {
+  padding: 10px 12px;
+}
+
+.weather-info {
+  width: 100%;
+  height: 100%;
+  padding: 20px 20px;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+  background: linear-gradient(to right, #00a4ff, #0072ff);
+  transition: transform 0.2s ease;
+  color: whitesmoke;
+}
+
+.info-date {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-date h1 {
+  margin-bottom: 0.65rem;
+  font-size: 2rem;
+  letter-spacing: 2px;
+}
+
+.info-weather {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: right;
+}
+
+.weather-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+@keyframes animation-icon {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
+
+.weather-type {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  transition: all 0.2s ease-in;
+  animation: animation-icon 0.8s infinite;
+  animation-timing-function: linear;
+  animation-direction: alternate;
+}
+.weather-temperature {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.weather-description {
+  margin-top: 1rem;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.weather-city {
+  margin-top: 0.25rem;
+  font-size: 16px;
+}
+
+.wind i {
+  margin: 10px;
+}

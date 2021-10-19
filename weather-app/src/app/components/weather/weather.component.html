@@ -1,0 +1,80 @@
+<div class="container-fluid">
+  <div class="input card">
+    <div class="mb-4">
+      <label for="city" class="form-label"
+        >City<span class="text-danger">*</span></label
+      >
+      <input
+        type="text"
+        class="form-control"
+        name="city"
+        id="city"
+        [(ngModel)]="city"
+      />
+    </div>
+    <div>
+      <label for="country" class="form-label"
+        >Country<span class="text-danger">*</span></label
+      >
+      <input
+        type="text"
+        class="form-control"
+        name="country"
+        id="country"
+        [(ngModel)]="country"
+      />
+    </div>
+    <div class="text-center mt-4">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        (click)="displayWeather()"
+      >
+        Get Weather
+      </button>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="weather" [(ngModel)]="weather">
+    <div class="col-md-3" *ngFor="let wth of weather.list">
+      <div class="weather-info">
+        <div class="d-flex justify-content-between">
+          <div class="info-date">
+            <h1>{{ wth.dt_txt | date: "shortTime" }}</h1>
+            <span>{{ getDate(wth.dt_txt) | date }}</span>
+            <span class="weather-city">{{ city }}, {{ country }}</span>
+          </div>
+
+          <div class="info-weather">
+            <div class="weather-wrapper">
+              <span class="weather-temperature"
+                >{{ wth.main.temp - 273.15 | number: "1.1-1" }}°C</span
+              >
+              <div class="weather-type">
+                <img
+                  src="https://openweathermap.org/img/wn/{{
+                    wth.weather[0].icon
+                  }}@2x.png"
+                  width="64px"
+                  height="64px"
+                  alt=""
+                />
+              </div>
+              <br />
+            </div>
+            <span class="weather-description">
+              {{ wth.weather[0].description | titlecase }}
+            </span>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between mt-3">
+          <div class="humidity"><img src="" alt=""> Humidity {{ wth.main.humidity }}%</div>
+          <div class="wind">
+            <i class="fas fa-wind"></i>Wind {{ wth.wind.speed }} km/h
+          </div>
+          <div class="pressure">Pressure {{ wth.main.pressure }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
