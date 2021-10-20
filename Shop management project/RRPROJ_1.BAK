@@ -1,0 +1,767 @@
+#include<fstream.h>    //for reading and writing files
+#include<conio.h>      //for clrscr()
+#include<string.h>     //for string characters
+#include<stdio.h>      //for gets and puts function
+#include<process.h>    //for exit function
+#include<iomanip.h>    //for setw function
+#include<dos.h>        //for delay and sleep function
+#include<graphics.h>   //for textcolor and textbackground
+#include<time.h>
+
+int n,total,bilno=0;
+void showall();
+void modifyqnty(int,int);
+void showlessstock();
+int billnoupdate();
+
+class shop
+{
+  char name[20];
+  long price;
+  int no;
+  int qnty;
+
+ public:
+
+ void read()
+ {
+   cout<<"Enter the product number:";
+   cin>>no;
+   cout<<"\nEnter the name of the product:";
+   gets(name);
+   cout<<"\nEnter the price:";
+   cin>>price;
+   cout<<"\nEnter the quantity:";
+   cin>>qnty;
+
+  }
+
+ void display()
+ {
+   cout.setf(ios::left);
+   cout<<setw(15)<<no<<setw(15)<<name<<setw(15)<<price<<setw(15)<<qnty<<endl;
+  }
+
+ int getno()
+ {return no;
+ };
+
+ int getqnty()
+ {return qnty;
+ };
+
+ char* getname()
+ {
+  return name;
+  }
+
+ int getprice()
+ {return price;
+ }
+
+void change();
+
+void updateqnty(int);
+
+
+};
+
+class bill
+{
+  char cname[20];
+  char name[5][20];
+  long price[5];
+  int no[5];
+  int qnty[5];
+  int total;
+  int billno;
+  int totprod;
+
+
+  public: void display();
+	  void display1();
+
+	   void _buy();
+
+	   void billchange();
+
+
+	int getbillno()
+	{return billno;
+	}
+
+
+ };
+
+ void bill::display()
+	  {
+	    int q,w;
+	    cout.setf(ios::left);
+	    time_t now= time(0);
+	    char*dt=ctime(&now);
+
+	    cout<<"\n                                 BILL:           ";
+	    cout<<"\n                               GAMESTOP           ";
+	    cout<<"\n---------------------------------------------------------";
+	    cout<<"\nDate and Time:"<<dt;
+	    cout<<"---------------------------------------------------------";
+	    cout<<"\nNAME:"<<cname;
+	    cout<<"\n---------------------------------------------------------";
+	    cout<<"\nBILL NO:"<<billno;
+	    cout<<"\n---------------------------------------------------------";
+	    cout<<endl<<setw(15)<<"ITEM NO."<<setw(15)<<"NAME"<<setw(15)<<"QUANTITY"<<setw(15)<<"PRICE"<<endl;
+	    cout<<"---------------------------------------------------------";
+
+	    for(int i=0;i<totprod;i++)
+	    {
+	    cout<<endl<<setw(15)<<no[i]<<setw(15)<<name[i]<<setw(15)<<qnty[i]<<setw(15)<<price[i]<<endl;
+	    cout<<"---------------------------------------------------------";
+	    }
+
+	    cout<<"\n                                     Bill amount:"<<total;
+	    cout<<"\n                                             GST:"<<0.18*total;
+	    cout<<"\n                                           -----------";
+	    cout<<"\n                                           Total:"<<total+0.18*total;
+	    cout<<"\n----------------------------------------------------------";
+
+   getch();
+   clrscr();
+   cout<<"\n\nHow would you like to pay?(1.CARD/2.CASH)\n";
+   cin>>q;
+
+   if(q==1)
+   {
+   cout<<"Swipe your card and enter the pin:";
+
+    for(i=0;i<4;i++)
+    {
+    cout<<"*";
+    }
+    cout<<"\n\nTHANK YOU FOR SHOPPPING WITH GAMESTOP!\n";
+   }
+
+   else
+   cout<<"Cash recieved\n\nTHANK YOU FOR SHOPPPING WITH GAMESTOP!\n";
+
+   getch();
+   clrscr();
+
+  }
+
+	   void bill::display1()
+	   {
+	    cout.setf(ios::left);
+	    cout<<"\n------------------------------------------------------------------";
+	    cout<<"\nNAME:"<<cname;
+	    cout<<"\nBILL NO:"<<billno<<endl;
+	    cout<<setw(15)<<"ITEM NO."<<setw(15)<<"NAME"<<setw(15)<<"QUANTITY"<<setw(15)<<"PRICE"<<endl<<endl;;
+
+	    for(int i=0;i<totprod;i++)
+	    cout<<setw(15)<<no[i]<<setw(15)<<name[i]<<setw(15)<<qnty[i]<<setw(15)<<price[i]<<endl;
+
+	    cout<<"\nTotal:";
+	    cout<<total;
+	    cout<<"\n------------------------------------------------------------------";
+	   }
+
+	void bill::_buy()
+	  {
+	    total=0;
+
+	    int num;
+	    shop s;
+	    char y='y';
+	    ifstream fin;
+	    ifstream fin1;
+	    int qty;
+	    int i=0,f=0,p=0;
+	    cout<<"Enter your name:";
+	    gets(cname);
+	    billno=billnoupdate();;
+
+	    while(y=='y')
+	     {
+	      start:
+
+	      fin.open("item.txt",ios::binary);
+	      showall();
+	      cout<<"\nWhat do you want to buy?(Enter item no.):\n";
+	      cin>>num;
+
+	      while(!fin.eof())
+	      {
+	       fin.read((char*)&s,sizeof(s));
+		if(num==s.getno())
+		  p=1;
+	       }
+
+	       fin.close();
+
+	       if(p==0)
+	       {
+		 cout<<"\nItem not found!!!\n";
+		 getch();
+		 goto start;
+
+		 }
+
+
+	      cout<<"Enter the quantity:";
+	      cin>>qty;
+
+	       fin.open("item.txt",ios::binary);
+
+		   while(!fin.eof()||f==0)
+		     {
+			 fin.read((char*)&s,sizeof(s));
+			 if(!fin)break;
+
+			  if(s.getno()==num)
+			   {
+			    if(s.getqnty()==0)
+			    cout<<"\nItem not available";
+			     else
+			      if(qty>s.getqnty())
+			       {
+				 cout<<"\nQuantity required exceeds available quantity";
+				 cout<<"\nEnter new quantity";
+				 cin>>qty;
+			       }
+
+			     else
+			       no[i]=s.getno();
+			       strcpy(name[i],s.getname());
+			       qnty[i]=qty;
+			       price[i]=qnty[i]*s.getprice();
+			       total+=price[i];
+			       f=1;
+			       modifyqnty(qty,no[i]);
+			       break;
+			     }
+		      }
+
+		   cout<<"\nDo you want to buy another product(y/n):";
+		   cin>>y;
+		   fin.close();
+		   i++;
+		   }
+
+	    totprod=i;
+	    clrscr();
+	    display();
+	   end:
+
+	  }
+
+
+     void bill::billchange()
+     {
+       cout.setf(ios::left);
+       shop s;
+       ifstream fin;
+       int nno,i,eno,pos,eqty,pric,f=0,p=0;
+       start:
+       cout<<"This is your bill:\n";
+       display1();
+       cout<<"\nWhat do you want to exchange:";
+       cin>>nno;
+       showall();
+       cout<<"\nWhat do you want to exchange it for:";
+       cin>>eno;
+
+	   fin.open("item.txt",ios::binary);
+
+	   while(!fin.eof())
+	      {
+		fin.read((char*)&s,sizeof(s));
+		if(eno==s.getno())
+		  p=1;
+	       }
+
+	       fin.close();
+
+	       if(p==0)
+	       {
+		 cout<<"\nItem not found!!!\n";
+		 getch();
+		 clrscr();
+		 goto start;
+
+		 }
+
+	      cout<<"\nEnter the quantity:";
+	      cin>>eqty;
+
+
+       for(i=0;i<totprod;i++)
+       {
+	 if(no[i]==nno)
+	 pos=i;
+
+       }
+
+       fin.open("item.txt",ios::binary);
+
+       while(!fin.eof()||f==0)
+       {
+
+	fin.read((char*)&s,sizeof(s));
+
+	if(!fin)break;
+
+	if(s.getno()==eno)
+	{
+	  f=1;
+	  pric=price[pos];
+	  no[pos]=s.getno();
+	  strcpy(name[pos],s.getname());
+	  qnty[pos]=eqty;
+	  price[pos]=qnty[pos]*s.getprice();
+	  total-=pric;
+	  total+=price[pos];
+	  modifyqnty(eqty,no[pos]);
+	  clrscr();
+	  cout<<"\nYour exchange bill:\n";
+	  cout<<setw(15)<<"\nITEM NO."<<setw(15)<<"NAME"<<setw(15)<<"QUANTITY"<<setw(15)<<"PRICE"<<endl;
+	  cout<<setw(15)<<no[pos]<<setw(15)<<name[pos]<<setw(15)<<qnty[pos]<<setw(15)<<price[pos]<<endl;
+	  cout<<"\nTotal:"<<price[pos];
+	  cout<<"\nYou have to pay:";
+
+	  if((price[pos]-pric)<0)
+	  cout<<"0";
+	  else
+	  cout<<price[pos]-0.5*pric;
+	  cout<<"\n(50% exhange charges applied)\n";
+	  getch();
+	  clrscr();
+       }
+
+      }
+    }
+
+  void shop::updateqnty(int qty)
+  {
+    qnty=qnty-qty;
+  }
+
+  void showlessstock()
+  {
+   ifstream fin;
+   shop s;
+   fin.open("item.txt",ios::binary);
+
+   cout<<setw(15)<<"\nITEM NO."<<setw(15)<<"NAME"<<setw(15)<<"PRICE"<<setw(15)<<"QUANTITY AVAILABLE\n";
+
+   while(!fin.eof())
+    {
+     fin.read((char*)&s,sizeof(s));
+     if(!fin)break;
+     if(s.getqnty()<10)
+     s.display();
+    }
+
+ fin.close();
+
+}
+
+
+
+  void shop::change()
+  {
+   int op;
+   char y;
+   do
+   {
+    cout<<"\nWhat to do want to change?\n";
+    cout<<"\n1.Name\n2.Price\n3.Quantity\n";
+    cin>>op;
+
+    switch(op)
+     {
+       case 1:cout<<"Enter the new name:";
+	      gets(name);
+	      break;
+
+      case 2:cout<<"Enter the new price:";
+	      cin>>price;
+	      break;
+
+       case 3:cout<<"Enter the new quantity:";
+	      cin>>qnty;
+	      break;
+
+       default:break;
+
+      }
+
+  cout<<"Do you want to change anything else?(y/n)";
+  cin>>y;
+
+   }while(y=='y');
+
+  }
+
+
+int billnoupdate()
+{
+ int no;
+ ifstream fin;
+ ofstream fout;
+ fin.open("billno.txt");
+ fin>>no;
+ fin.close();
+ no++;
+ fout.open("billno.txt");
+ fout<<no;
+ fin.close();
+ return no;
+}
+
+void add()
+{
+  shop s;
+  ofstream fout;
+  char y;
+  fout.open("item.txt",ios::binary|ios::app);
+
+  do
+  {
+    cout<<"\nEnter the details\n\n";
+    s.read();
+    fout.write((char*)&s,sizeof(s));
+    cout<<"\n!!ITEM SUCCESSFULLY ADDED!!\n";
+    getch();
+    clrscr();
+    cout<<"\nDo you want to to add another product?(y/n):";
+    cin>>y;
+    clrscr();
+
+   }while(y=='y');
+
+   fout.close();
+}
+
+void showall()
+{
+  shop s;
+  ifstream fin;
+  cout.setf(ios::left);
+  cout<<endl<<setw(15)<<"ITEM NO."<<setw(15)<<"NAME"<<setw(15)<<"PRICE"<<setw(15)<<"QUANTITY AVAILABLE\n";
+  fin.open("item.txt",ios::binary);
+
+  while(!fin.eof())
+  { fin.read((char*)&s,sizeof(s));
+    if(!fin)break;
+    s.display();
+   }
+
+ fin.close();
+
+}
+
+
+
+void modify()
+{
+ ifstream fin;
+ ofstream fout;
+ shop s;
+ int no;
+ fin.open("item.txt",ios::binary);
+ fout.open("titem.txt",ios::binary);
+ cout<<"\nEnter the product no. of item you want to change:";
+ cin>>no;
+
+ while(!fin.eof())
+ {
+   fin.read((char*)&s,sizeof(s));
+   if(!fin)break;
+   if(no==s.getno())
+    s.change();
+    fout.write((char*)&s,sizeof(s));
+
+  }
+
+ fin.close();
+ fout.close();
+ remove("item.txt");
+ rename("titem.txt","item.txt");
+
+}
+
+
+void modifyqnty(int qty,int no)
+{
+ ifstream fin;
+ ofstream fout;
+ shop s;
+ fin.open("item.txt",ios::binary);
+ fout.open("titem.txt",ios::binary);
+
+
+ while(!fin.eof())
+ {
+   fin.read((char*)&s,sizeof(s));
+   if(!fin)break;
+   if(no==s.getno())
+    s.updateqnty(qty);
+    fout.write((char*)&s,sizeof(s));
+
+  }
+
+ fin.close();
+ fout.close();
+ remove("item.txt");
+ rename("titem.txt","item.txt");
+
+}
+
+
+
+void delet()
+{
+ int no;
+ char y;
+ shop s;
+ ifstream fin;
+ ofstream fout;
+ fin.open("item.txt",ios::binary);
+ fout.open("titem.txt",ios::binary);
+
+ do
+ {
+  cout<<"\nEnter the product no. of the product you want to delete:";
+  cin>>no;
+
+   while(!fin.eof())
+   {
+     fin.read((char*)&s,sizeof(s));
+     if(!fin)break;
+     if(s.getno()!=no)
+       {
+	fout.write((char*)&s,sizeof(s));
+	}
+    }
+
+   cout<<"\n!!Item successfully deleted!!\n";
+   cout<<"\nDo you want to delete another product(y/n):";
+   char y;
+
+  }while(y=='y');
+
+ fin.close();
+ fout.close();
+ remove("item.txt");
+ rename("titem.txt","item.txt");
+
+}
+
+
+void buy()
+{
+  bill b;
+  ofstream fout;
+  fout.open("all.txt",ios::binary|ios::app);
+  b._buy();
+  fout.write((char*)&b,sizeof(b));
+  fout.close();
+}
+
+
+void showfull()
+{
+
+ bill b;
+ ifstream fin;
+
+      fin.open("all.txt",ios::binary);
+
+
+	while(!fin.eof())
+	 {
+	  fin.read((char*)&b,sizeof(b));
+	  if(!fin)break;
+	  b.display1();
+
+	 }
+	fin.close();
+
+}
+
+
+void exchange()
+{
+  int no;
+  bill b;
+  ifstream fin;
+  ofstream fout;
+  cout<<"Enter the bill no.:";
+  cin>>no;
+  fin.open("all.txt",ios::binary);
+  fout.open("tall.txt",ios::binary);
+
+  while(!fin.eof())
+   {
+     fin.read((char*)&b,sizeof(b));
+     if(!fin)break;
+     if(no==b.getbillno())
+     b.billchange();
+     fout.write((char*)&b,sizeof(b));
+
+    }
+
+  fin.close();
+  fout.close();
+  remove("all.txt");
+  rename("tall.txt","all.txt");
+
+}
+void cover()
+{char ch1;
+cout<<endl<<endl;
+ clrscr();textcolor(GREEN);
+ cprintf("          00000000000     0000000000   00             00   0000000000\n\r");delay(300);
+ cprintf("          00000000000     0000000000   000           000   0000000000\n\r");delay(300);
+ cprintf("          000             000    000   0000         0000   000       \n\r");delay(300);
+ cprintf("          000             000    000   00000       00000   0000000000\n\r");delay(300);
+ cprintf("          000  00000000   0000000000   000000     000000   0000000000\n\r");delay(300);
+ cprintf("          000  00000000   0000000000   0000000   0000000   000       \n\r");delay(300);
+ cprintf("          000000000  00   000    000   00000000 00000000   0000000000\n\r");delay(300);
+ cprintf("          000000000  00   000    000   00000000000000000   0000000000\n\r");delay(300);
+ cout<<endl<<endl;
+ cprintf("          00000000000     0000000000   00000000000000000   0000000000\n\r");delay(300);
+ cprintf("          00000000000     0000000000   00000000000000000   0000000000\n\r");delay(300);
+ cprintf("          000                000       000           000   000    000\n\r");delay(300);
+ cprintf("          000                000       000           000   000    000\n\r");delay(300);
+ cprintf("          00000000000        000       000           000   0000000000\n\r");delay(300);
+ cprintf("          00000000000        000       000           000   0000000000\n\r");delay(300);
+ cprintf("                  000        000       000           000   000       \n\r");delay(300);
+ cprintf("                  000        000       000           000   000       \n\r");delay(300);
+ cprintf("          00000000000        000       00000000000000000   000       \n\r");delay(300);
+ cprintf("          00000000000        000       00000000000000000   000       \n\r");delay(300);
+
+ clrscr();textcolor(GREEN+BLINK);
+
+ cprintf("          00000000000     0000000000   00             00   0000000000\n\r");
+ cprintf("          00000000000     0000000000   000           000   0000000000\n\r");
+ cprintf("          000             000    000   0000         0000   000       \n\r");
+ cprintf("          000             000    000   00000       00000   0000000000\n\r");
+ cprintf("          000  00000000   0000000000   000000     000000   0000000000\n\r");
+ cprintf("          000  00000000   0000000000   0000000   0000000   000       \n\r");
+ cprintf("          000000000  00   000    000   00000000 00000000   0000000000\n\r");
+ cprintf("          000000000  00   000    000   00000000000000000   0000000000\n\r");
+ cout<<endl<<endl;
+ cprintf("          00000000000     0000000000   00000000000000000   0000000000\n\r");
+ cprintf("          00000000000     0000000000   00000000000000000   0000000000\n\r");
+ cprintf("          000                000       000           000   000    000\n\r");
+ cprintf("          000                000       000           000   000    000\n\r");
+ cprintf("          00000000000        000       000           000   0000000000\n\r");
+ cprintf("          00000000000        000       000           000   0000000000\n\r");
+ cprintf("                  000        000       000           000   000       \n\r");
+ cprintf("                  000        000       000           000   000       \n\r");
+ cprintf("          00000000000        000       00000000000000000   000       \n\r");
+ cprintf("          00000000000        000       00000000000000000   000       \n\r");
+ delay(700);
+ textcolor(WHITE);
+ cout<<"                             Press any key to continue ";
+ getch();
+ clrscr();
+ }
+
+
+void main()
+{
+ clrscr();
+ //cover();
+ int op,op1,op2;
+ char y,y1,y2;
+
+
+  start:
+  while(1)
+   { clrscr();
+    cout<<"\nAre you \n1)An admin \n2)A customer\n\nOR\n\n3)EXIT\n";
+    cout<<"\nEnter you option:";
+    cin>>op;
+    clrscr();
+
+    switch(op)
+    {
+      case 2:do
+	     {
+	     cout<<"What do you want to do?";
+	     cout<<"\n1)Buy\n2)Exchange\n3)Exit\n";
+
+	    cin>>op1;
+	    clrscr();
+
+	    switch(op1)
+	     {  case 1:buy();
+		       break;
+
+		case 2:exchange();
+		       break;
+
+		case 3:goto start;
+		       break;
+
+
+	      }
+
+	    cout<<"\nDo you want to do anything else?(y/n)";
+	    cin>>y1;
+	    clrscr();
+	    }while(y1=='y');
+	    break;
+
+
+	   case 1:
+	     do
+	     {
+	      clrscr();
+	      cout<<"\nWhat do you want to do?";
+	      cout<<"\n1)Add products\n2)Modify products\n3)Delete products\n4)Showall products available\n5)Show all transactions of the day\n6)Show products with less stock\n7)Exit\n";
+	      cin>>op2;
+	       clrscr();
+
+	      switch(op2)
+	      {
+	       case 1:add();
+		      break;
+
+	       case 2:modify();
+		      break;
+
+	       case 3:delet();
+		      break;
+
+	       case 4:showall();
+		      break;
+
+	       case 5:showfull();
+		      break;
+
+	       case 6:showlessstock();
+		      break;
+
+	       case 7:goto start;
+		      break;
+
+	      }
+	     getch();
+	     clrscr();
+	     cout<<"\nDo you want to do anything else?(y/n)";
+	     cin>>y2;
+	     clrscr();
+	    }while(y2=='y');
+	    break;
+
+	   case 3:exit(0);
+	   break;
+
+	}
+  }
+
+getch();
+
+}
